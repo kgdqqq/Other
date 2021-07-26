@@ -1,0 +1,12 @@
+在GRUB模式敲入以下代码：
+
+wget -O /root/ikuai.iso https://www.ikuai8.com/download.php?n=/3.x/iso/iKuai8_x32_3.3.3_Build202002040918.iso
+
+
+
+
+
+loopback loop /root/ikuai.iso
+linux (loop)/boot/vmlinuz bootguide=cd
+initrd (loop)/boot/rootfs
+boot
