@@ -19,9 +19,7 @@ wget -O /home/aria2/aria2-config/script/delete.sh https://kgdqqq.github.io/Other
 wget -O /home/aria2/aria2-config/aria2.conf https://kgdqqq.github.io/Other/aria2/aria2.conf
 
 
-
-
-wget -O /home/aria2/aria2-pro.yml https://kgdqqq.github.io/Other/aria2/aria2.conf
+wget -O /home/aria2/aria2-pro.yml https://kgdqqq.github.io/Other/aria2/aria2-pro.yml
 
 
 
