@@ -1,0 +1,17 @@
+version: "2"
+services:
+  qbittorrent:
+    image: superng6/qbittorrent
+    container_name: qbittorrent
+    environment:
+      - PUID=1026
+      - PGID=100
+      - TZ=Asia/Shanghai
+    volumes:
+      - /home/qbittorrent/config:/config
+      - /home/downloads:/downloads
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 8080:8080
+    restart: unless-stopped
