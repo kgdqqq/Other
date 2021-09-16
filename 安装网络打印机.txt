@@ -1,0 +1,18 @@
+@echo off
+//-----先删除名为"ZSPR010"本地打印机-----
+rundll32 printui.dll,PrintUIEntry /dl  /n "ZSPR010" /q
+//-----先检测是否存%APPDATA%\prnport.vbs脚本文件，如果没有从服务器zsprinter.nccn.int复制一个-----
+IF NOT EXIST "%APPDATA%\prnport.vbs" (copy \\zsprinter.nccn.int\Driver\prnport.vbs "%APPDATA%\")
+//-----通过prnport.vbs建一个打印机IP端口（192.168.58.240即网络打印机的IP）-----
+cscript "%APPDATA%\prnport.vbs" -a -r 192.168.58.240 -h 192.168.58.240 -o raw -n 9100
+//-----跳转至32位或64位驱动安装-----
+goto %PROCESSOR_ARCHITECTURE%
+:x86
+//-----\\zsprinter.nccn.int\Driver\ADC286_Printer\ 打印机32位驱动位置-----
+//-----"Generic 36C-6SeriesPCL" 打印机32位驱动名称；ZSPR010打印机名称 -----
+rundll32 printui.dll,PrintUIEntry /if /b "ZSPR010" /f  \\zsprinter.nccn.int\Driver\ADC286_Printer\Win_x86\KOAYQJA_.INF /r "192.168.58.240" /m "Generic 36C-6SeriesPCL" /z /u
+goto end
+:AMD64
+rundll32 printui.dll,PrintUIEntry /if /b "ZSPR010" /f  \\zsprinter.nccn.int\Driver\ADC286_Printer\Win_x64\KOAYQJA_.INF /r "192.168.58.240" /m "Generic 36C-6SeriesPCL" /z /u
+:end
+exit

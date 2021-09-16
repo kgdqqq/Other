@@ -1,0 +1,73 @@
+@六木 你用
+type: grid
+cards:
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.isa_kg03hl_d4db_right_switch_service
+    icon: mdi:cctv
+    icon_height: 35px
+    name: 北射灯
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.090615_mesw3_bbda_right_switch_service
+    icon: mdi:cctv
+    icon_height: 35px
+    name: 南射灯
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.090615_mesw3_bbda_left_switch_service
+    icon: mdi:ceiling-light
+    icon_height: 35px
+    name: 吸顶灯
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.090615_mesw3_bbda_middle_switch_service
+    icon_height: 35px
+    name: 走道灯
+    icon: mdi:lightbulb-on-outline
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.isa_kg03hl_d4db_left_switch_service
+    icon: mdi:filmstrip
+    icon_height: 35px
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.isa_kg03hl_d4db_middle_switch_service
+    icon: mdi:radiator
+    icon_height: 35px
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.6c00a81327d99a7df6issn_1
+    icon: mdi:power-socket-eu
+    icon_height: 35px
+    name: 北插座
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.6c00a81327d99a7df6issn_2
+    icon: mdi:usb
+    icon_height: 35px
+    name: 北USB
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.6c3ae3b9a2a4ea3a996nqv_1
+    icon: mdi:power-socket-eu
+    icon_height: 35px
+    name: 南插座
+  - type: button
+    tap_action:
+      action: toggle
+    entity: switch.6c3ae3b9a2a4ea3a996nqv_2
+    icon: mdi:usb
+    icon_height: 35px
+    name: 南USB
+columns: 2
+square: false
