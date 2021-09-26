@@ -1,4 +1,4 @@
-@六木 你用
+@六木 
 type: grid
 cards:
   - type: button
