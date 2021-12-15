@@ -1,0 +1,49 @@
+局域网有一台主机A，没有公网的IP, 也就是没有办法直接连到互联网上下载东西，同时内网有另外一台主机B，有公网接入。这个时候为了让A连接到互联网，我把B设置成NAT主机，A的网关指向B。
+准确的来说，现在的相当于SNAT模式。分析一下数据包流向：
+
+IP信息如下：
+A: eth0: 10.122.70.74
+B: eth1：10.122.70.65 / eth0：220.220.220.65
+
+发送数据包：
+
+A发送数据包时，B也就是NAT主机，分析数据包表头，将此数据包转到可以连接公网的Public IP上去。由于私有IP与公有IP不能互通，B会通过iptables的NAT table内的Postrounting链将数据包表头伪装成B的公网IP，并且将这两个不同来源的数据包对应关系写入暂存内存中，然后将数据包传送出去。此时传到互联网的这个数据包，已经表现为来自公网IP，而非来自局域网。
+
+接收响应包：
+
+当从互联网把数据响应给A时，会首先进入NAT主机B，B分析数据包的序号，对比刚刚记录到内存中的数据，由于发现该数据包为后端主机之前传送出去的，因此在NAT Prerouting链中，会将目标IP修改成为后端主机，即A的IP，然后发现目标已经不是本机公网IP，开始通过路由分析，将数据包传送到B的局域网接口，再传送到最终目标10.122.70.74上去。
+
+B的设置如下：
+
+#允许接受局域网网卡的数据包，
+iptables -I INPUT -i eth1 -j ACCEPT
+
+#开启路由功能
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+#伪装数据包
+iptables -t nat -A POSTROUTING -s 10.122.70.74 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.122.70.74 -j MASQUERADE
+
+或者用SNAT直接修改IP数据包的表头来源IP
+iptables -t nat -A POSTROUTING -o eth1 -j SNAT –to 10.122.70.74
+如果支持多个IP
+iptables -t nat -A POSTROUTING -o eth1 -j SNAT –to 10.122.70.74-10.122.70.100
+
+A设置：
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+
+# Realtek Semiconductor Co., Ltd. RTL-8139/8139C/8139C+
+DEVICE=eth0
+BOOTPROTO=static
+ONBOOT=yes
+IPADDR=10.122.70.74
+NETMASK=255.255.0.0
+GATEWAY=10.122.70.65
+
+===============================================
+查看nat表链规则
+iptables -t nat -L -n
+
+删除POSTROUTING第一条规则
+iptables -t nat -D POSTROUTING 1
