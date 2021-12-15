@@ -1,0 +1,167 @@
+场景
+项	域名	描述
+pc端	www.one.com	用于pc端访问官网
+移动端	m.one.com	用于移动端访问
+现在的需求是这样，在pc端访问www.one.com和m.one.com都跳转到www.one.com
+而在移动端访问www.one.com和m.one.com都跳转到m.one.com
+
+参考，github上的这篇文章很详细，但是比较复杂，很多场景我们用不到，所以参考这个，我修改如下。
+
+pc端：www.one.com
+
+  server {
+      listen       80;
+      server_name  www.one.com;
+
+      #charset koi8-r;
+      #access_log  logs/host.access.log  main;
+    # 下面根据user_agent可以获取
+     if ($http_host !~ "^www.one.cn$") {
+      rewrite  ^(.*)    http://www.one.cn$1 permanent;
+     }
+     if ($http_user_agent ~* (mobile|nokia|iphone|ipad|android|samsung|htc|blackberry)) {
+      rewrite  ^(.*)    http://m.one.com$1 permanent;
+     }
+    location / {
+            root     /home/build/rampage-home-front/dist/html;
+            index  index.html index.htm;
+     }
+
+}
+作用部分代码如下：
+
+ if ($http_host !~ "^www.one.cn$") {
+  rewrite  ^(.*)    http://www.one.cn$1 permanent;
+ }
+ if ($http_user_agent ~* (mobile|nokia|iphone|ipad|android|samsung|htc|blackberry)) {
+  rewrite  ^(.*)    http://m.one.com$1 permanent;
+ }
+移动端：m.one.com
+
+  server {
+      listen       80;
+      server_name  m.one.cn;
+
+      #charset koi8-r;
+      #access_log  logs/host.access.log  main;
+    #非移动端跳转到 www.one.com
+     if ($http_user_agent !~* (mobile|nokia|iphone|ipad|android|samsung|htc|blackberry)) {
+      rewrite  ^(.*)    http://www.one.com$1 permanent;
+     }
+
+    location / {
+        root     /home/build/rampage-mobile-front/dist;
+        index  index.html index.htm;
+      }
+}
+作用部分代码如下：
+
+ if ($http_user_agent !~* (mobile|nokia|iphone|ipad|android|samsung|htc|blackberry)) {
+  rewrite  ^(.*)    http://www.one.com$1 permanent;
+ }
+至此完成了相关配置
+
+ 
+
+实例配置：
+
+PC端网站配置文件
+  
+ 
+ server {
+        listen       80 default_server;
+        listen       [::]:80 default_server;
+        server_name  weifeng.com;
+        root         /usr/share/nginx/html;
+        rewrite ^(.*)$ https://${server_name}$1 permanent;
+ 
+          include /etc/nginx/default.d/*.conf;
+ 
+         
+       if ($http_user_agent ~* (mobile|nokia|iphone|ipad|android|samsung|htc|blackberry)) {
+                   rewrite  ^(.*)    https://m.weifeng.com$1 permanent;
+        }
+ 
+        location / {
+        }
+ 
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+ 
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+    }
+ 
+server {
+ listen 443;
+ server_name weifeng.com;
+ ssl on;
+ root /usr/share/nginx/html;
+ index index.html index.htm;
+ ssl_certificate   /cert/weifeng.com.pem;
+ ssl_certificate_key  /cert/weifeng.com.key;
+ ssl_session_timeout 5m;
+ ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+ ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+ ssl_prefer_server_ciphers on;
+ 
+ 
+ if ($http_user_agent ~* (mobile|nokia|iphone|ipad|android|samsung|htc|blackberry)) {
+                   rewrite  ^(.*)    https://m.weifeng.com$1 permanent;
+        }
+ 
+ 
+ location / {
+     root /usr/share/nginx/html;
+     index index.html index.htm;
+ }
+}
+　　
+
+移动端nginx配置文件
+
+    server {
+        listen       80;
+        server_name  m.weifeng.com;
+        root         /usr/share/nginx/html-mobile;
+        rewrite ^(.*)$ https://${server_name}$1 permanent;
+ 
+ 
+        location / {
+        }
+ 
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+ 
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+    }
+ 
+ 
+ 
+server {
+ 
+ 
+        listen 443;
+        server_name m.weifeng.com;
+        ssl on;
+        root /usr/share/nginx/html-mobile;
+        index index.html index.htm;
+        ssl_certificate   /cert/weifeng.com.pem;
+        ssl_certificate_key  /cert/weifeng.com.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+ 
+ 
+ location / {
+     root /usr/share/nginx/html-mobile;
+     index index.html index.htm;
+ }
+}
+　　
