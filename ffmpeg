@@ -1,0 +1,11 @@
+deb http://mirrors.hit.edu.cn/debian/ buster main contrib non-free
+# deb-src http://mirrors.hit.edu.cn/debian/ buster main contrib non-free
+deb http://mirrors.hit.edu.cn/debian/ buster-updates main contrib non-free
+# deb-src http://mirrors.hit.edu.cn/debian/ buster-updates main contrib non-free
+deb http://mirrors.hit.edu.cn/debian/ buster-backports main contrib non-free
+# deb-src http://mirrors.hit.edu.cn/debian/ buster-backports main contrib non-free
+deb http://security.debian.org/debian-security buster/updates main
+deb http://ftp.cn.debian.org/debian sid main 
+
+apt-get upgrade &&  apt update -y
+apt install netcat ffmpeg -y
